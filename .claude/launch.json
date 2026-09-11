@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "cookiejar-relayer",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["--prefix", "relayer", "run", "start"],
+      "port": 8787
+    },
+    {
+      "name": "cookiejar-app",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["--prefix", "app", "run", "dev"],
+      "port": 5174
+    }
+  ]
+}
