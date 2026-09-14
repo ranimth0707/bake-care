@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="en"><meta charset="utf-8"><title>Arisan protocol review — 2026-09-14</title>
+<style>body{font:15px/1.55 system-ui;max-width:850px;margin:48px auto;padding:0 24px;color:#20231f}h1,h2{line-height:1.2}code{background:#f1f3ed;padding:2px 5px;border-radius:4px}.ok{color:#28621f}.risk{color:#8a4b08}</style>
+<h1>Arisan protocol review</h1>
+<p><strong>Outcome: B.</strong> The repeated-winner correctness bug is fixed and the fund-transfer paths retain signer, PDA, ownership, and checked-arithmetic protections.</p>
+<h2>Resolved high-severity correctness issue</h2>
+<p>The old draw used <code>seed % member_count</code>, so a prior winner could be selected again. A compact on-chain winner bitmap now removes prior recipients from the candidate population before selection. Claim updates the bitmap atomically.</p>
+<h2>Security checks</h2>
+<ul><li class="ok">Creator has no instruction that transfers the pot to an arbitrary destination.</li><li class="ok">Pot and bond PDAs are re-derived from the circle and signed only by program seeds.</li><li class="ok">Only the selected, signing wallet can claim, and its Member account is PDA-, wallet-, seat-, payment-, activity-, and winner-checked.</li><li class="ok">Legacy roster migration verifies Anchor ownership/discriminators, circle identity, seat bounds, complete coverage, and winner counts.</li><li class="ok">Value arithmetic uses checked operations on the draw/claim path.</li></ul>
+<h2>Open risks</h2>
+<ul><li class="risk"><strong>Economic default:</strong> a wallet cannot be forced to make future payments. Once optional collateral is exhausted, later pots can be short.</li><li class="risk"><strong>Upgrade trust:</strong> the program remains upgradeable by a single authority. Move it to a multisig before material TVL; freeze only after a mature audit.</li><li class="risk"><strong>Dependencies:</strong> npm reports transitively inherited advisories in Anchor/Web3 dependencies with no upstream fix available.</li></ul>
+<h2>Verification</h2>
+<p>3 Rust bitmap tests, 49 frontend/relayer tests, TypeScript production build, live program upgrade verification, and a 30,591-CU simulation against the existing “Masak Masak” state.</p>
+</html>
+
