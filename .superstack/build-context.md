@@ -14,9 +14,18 @@
   has already won, is inactive, or has not paid the current round.
 - Frontend transactions remain sponsored; the maximum legacy migration path is
   reimbursement + initialize + sync + request/finalize (four instructions).
-- Economic constraint: in an N-member ROSCA, every member commits to N payments.
-  Optional collateral covers only the number of contributions it contains;
-  payments after collateral is exhausted cannot be forced from a wallet.
+- `CircleSafety` is a second companion PDA. New circles require each member to
+  lock `contribution × max_members` as reserve before creation can start. The
+  safety PDA and bond vault are checked before request/finalize/claim.
+- `slash_absent` now settles a missed round even when the available reserve is
+  zero, increments `paid_this_round`, and moves only the available amount. A
+  protected circle cannot reach that state for a future obligation: the draw is
+  blocked until reserves are repaired.
+- After all members settle a round, the required reserve drops by that round's
+  obligation before the draw. This keeps a fully collateral-funded default from
+  failing merely because the just-settled amount moved from Bond to Pot.
+- The config PDA now has an explicit `transfer_authority` handoff for a Squads
+  governance PDA. The deployed upgrade authority has not been transferred yet;
+  use a 2-of-3 threshold with a documented recovery plan.
 - Rollback binary for the pre-upgrade program was saved temporarily at
   `/tmp/arisan-upgrade.SddVVY/cookie_jar-before.so`.
-
